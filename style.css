@@ -25,5 +25,5 @@ body {
 
 /* Ensures Masonry doesn't freak out */
 .card {
-  float: left;
+  float: left; 
 }
