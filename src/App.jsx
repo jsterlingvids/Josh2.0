@@ -1,13 +1,29 @@
-import React from 'react';
-import MasonryGrid from './components/MasonryGrid';
+// src/App.jsx
+import React, { useState, useEffect } from 'react';
+import Header from './components/Header.jsx';
+import MasonryGrid from './components/MasonryGrid.jsx';
 
-function App() {
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close menu on Escape
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
   return (
-    <div>
-      <h1 style={{ textAlign: 'center' }}>📸 Josh’s Masonry Grid</h1>
-      <MasonryGrid />
-    </div>
+    <>
+      <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <main style={{ paddingTop: '60px' }}>
+        {/* pushes the grid below the 60px-tall header */}
+        <MasonryGrid />
+      </main>
+    </>
   );
 }
-
-export default App;

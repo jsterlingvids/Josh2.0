@@ -1,9 +1,8 @@
 export default [
   {
-    title: "Card One",
+    title: "Showreel",
     description: "A short description of card one.",
-    image: "https://source.unsplash.com/random/300x200?sig=1",
-    tall: false,
+    vimeoId: "921691088"
   },
   {
     title: "Tall Card",
