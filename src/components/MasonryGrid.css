@@ -7,6 +7,68 @@ body {
   padding: 0;
 }
 
+/* draw a semi-transparent fullscreen layer behind the menu when open */
+body.menu-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;                       /* top/right/bottom/left: 0 */
+  background: rgba(0, 0, 0, 0.3); /* adjust alpha to taste */
+  z-index: 1100;                  /* just under your .site-menu (which is 1150+) */
+  pointer-events: none;           /* clicks pass through if you want them to */
+}
+
+/* keep page from scrolling when the menu is open */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* DRAWER BACKDROP via body pseudo-element */
+body.menu-open {
+  overflow: hidden; /* prevent page scroll when menu is open */
+}
+body.menu-open::before {
+  content: '';
+  position: fixed;
+  inset: 0;                        /* covers full viewport */
+  background: rgba(0, 0, 0, 0.3);  /* adjust opacity if it’s too dark */
+  z-index: 1000;                   /* behind the menu panel */
+  pointer-events: auto;            /* allow clicks (e.g. to close if you add a handler) */
+}
+
+/* SIDE-DRAWER PANEL */
+.site-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  /* FIXED WIDTH: only covers 300px (or tweak as you like) */
+  width: 300px;
+  height: 100vh;
+
+  padding-top: 60px;        /* push content under your header */
+  background: #fff;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+
+  /* start hidden off-screen */
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1100;            /* above the backdrop (1000) */
+}
+
+/* when open, slide it left into view */
+.site-menu.open {
+  transform: translateX(0);
+}
+
+/* stack links vertically */
+.site-menu a {
+  display: block;
+  padding: 1rem 20px;
+  color: #333;
+  text-decoration: none;
+}
+
+
 /* Header and Navigation */
 .site-header {
   position: fixed;
@@ -33,90 +95,99 @@ body {
   z-index: 1101;
 }
 
+/* ============================= */
+/* Hamburger / Toggle Button CSS */
+/* ============================= */
+
 .hamburger {
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 20px;                   /* hug the right edge */
   transform: translateY(-50%);
-  width: 24px;
-  height: 18px;
+  
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  padding: 8px;
+  border-radius: 9999px;         /* pill / circle shape */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  
   cursor: pointer;
-  z-index: 1101;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.hamburger span {
-  display: block;
-  height: 2px;
-  background: #333;
-  border-radius: 1px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+.hamburger:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.1);
 }
 
-.hamburger.open span:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
+.hamburger:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
 }
 
-.hamburger.open span:nth-child(2) {
-  opacity: 0;
+/* Icon sizing & stroke */
+.hamburger svg {
+  width: 28px;
+  height: 28px;
+  stroke: #333;                  /* default dark gray bars */
+  transition: stroke 0.3s ease, transform 0.3s ease;
 }
 
-.hamburger.open span:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
+/* Open state: make the X black, optionally spin */
+.hamburger.open svg {
+  stroke: #000;                  /* pure black X */
+  transform: rotate(90deg);
 }
 
+
+
+/* Make all elements use border-box so widths include padding */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Drop any old display:none on .site-menu */
 .site-menu {
+  display: flex;                 /* ensure it’s renderable */
+  flex-direction: column;        /* stack your links vertically */
   position: fixed;
-  top: 60px;
+  top: 0;
   right: 0;
-  width: 200px;
-  height: calc(100vh - 60px);
+  width: 100vw;
+  height: 100vh;
+  padding-top: 60px;             /* push below your header */
   background: #fff;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
+  overflow-y: auto;
+  
+  /* start fully off-screen + invisible */
   transform: translateX(100%);
-  transition: transform 0.3s ease;
-  z-index: 1100;
+  opacity: 0;
+  pointer-events: none;          /* can’t click it when hidden */
+  
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 1200;
 }
 
+/* When “open” is toggled, slide it in and make it interactive */
 .site-menu.open {
   transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.site-menu a {
-  margin-bottom: 15px;
-  text-decoration: none;
-  color: #333;
-  font-size: 1rem;
-}
 
 /* Masonry Grid Container */
 .grid {
-  /* remove top margin; use main padding instead */
-  margin: 0 auto 20px;
-  max-width: 1200px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  position: relative;      /* for Masonry absolute items */
+  margin: 0 auto 20px;     /* auto-center once Masonry sets width */
   padding: 0 10px;
 }
 
-/* Add padding to the main container for spacing around the grid */
-#root > main {
-  padding: 20px;
-}
-
-/* Optional grid sizer for Masonry.js */
-.grid-sizer {
-  width: 300px;
-}
-
-/* Optional grid sizer for Masonry.js */
+/* Grid sizer sets your column width */
 .grid-sizer {
   width: 300px;
 }
@@ -133,6 +204,7 @@ body {
   opacity: 0;
   animation: fadeInUp 0.5s ease forwards;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: absolute;      /* Masonry will position each card */
 }
 
 .card:hover {
@@ -141,7 +213,7 @@ body {
   z-index: 2;
 }
 
-@keyframes fadeInUp fadeInUp {
+@keyframes fadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
@@ -182,7 +254,6 @@ body {
   100% { background-position: -200% 0; }
 }
 
-/* Play icon overlay */
 .play-icon {
   position: absolute;
   top: 50%;
@@ -265,37 +336,50 @@ body {
   transform: scale(1.1);
 }
 
-/* Hover push effect: hovered card scales up, others shrink slightly */
-.grid:hover .card {
-  transition: transform 0.3s ease;
-}
-
-.grid:hover .card:not(:hover) {
-  transform: translateY(0) scale(0.95) !important;
-  transform-origin: center top;
-  transition: transform 0.3s ease;
-}
-
-
-.grid:hover .card:not(:hover) {
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .site-menu { width: 180px; transform: translateX(100%); }
-  .hamburger { width: 22px; height: 16px; }
-  .grid { margin-top: 80px; gap: 15px; }
-  .card, .grid-sizer { width: calc(50% - 15px); }
+  .site-menu {
+    right: -220px;   /* same off-screen hide */
+  }
+  .hamburger {
+    width: 28px;
+    height: 20px;
+  }
+  .grid {
+    margin-top: 80px;
+  }
+  .card, .grid-sizer {
+    width: calc(50% - 10px);
+  }
 }
 
 @media (max-width: 480px) {
-  .site-menu { width: 100%; transform: translateX(100%); }
-  .site-menu.open { transform: translateX(0); }
-  .lightbox-content { max-width: 95vw; max-height: 55vh; border-radius: 6px; }
-  .grid { margin-top: 70px; gap: 10px; }
-  .card, .grid-sizer { width: calc(100% - 20px); }
-  .close-button { top: 6px; right: 6px; width: 24px; height: 24px; font-size: 1rem; }
-  .play-icon { font-size: 1.2rem; }
+  .site-menu {
+    right: -100%;    /* off-screen full-width */
+    width: 100%;
+  }
+  .site-menu.open {
+    right: 0;
+  }
+  .lightbox-content {
+    max-width: 95vw;
+    max-height: 55vh;
+    border-radius: 6px;
+  }
+  .grid {
+    margin-top: 70px;
+  }
+  .card, .grid-sizer {
+    width: calc(100% - 20px);
+  }
+  .close-button {
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+  .play-icon {
+    font-size: 1.2rem;
+  }
 }

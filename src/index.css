@@ -1,6 +1,20 @@
-body {
+/* 1) Make all elements include padding/border in their width */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2) Prevent horizontal scroll and reset default spacing */
+html, body {
   margin: 0;
-  padding: 2rem;
+  padding: 0;
+  overflow-x: hidden;
   font-family: system-ui, sans-serif;
   background: #f4f4f4;
+}
+
+/* Push your app in from the edges if you like */
+body {
+  padding: 2rem;
 }

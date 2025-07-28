@@ -1,3 +1,4 @@
+// src/components/MasonryGrid.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import Masonry from 'masonry-layout';
 import imagesLoaded from 'imagesloaded';
@@ -14,7 +15,8 @@ export default function MasonryGrid() {
       itemSelector: '.card',
       columnWidth: '.grid-sizer',
       gutter: 20,
-      percentPosition: true
+      percentPosition: true,
+      fitWidth: true           // ← shrink-wrap the grid’s width
     });
 
     imagesLoaded(gridRef.current, () => {
@@ -37,7 +39,7 @@ export default function MasonryGrid() {
   return (
     <>
       <div className="grid" ref={gridRef}>
-        <div className="grid-sizer"></div>
+        <div className="grid-sizer" />
         {cardData.map((card, index) => {
           const isVimeo = !!card.vimeoId;
           const imageUrl = isVimeo
@@ -66,7 +68,6 @@ export default function MasonryGrid() {
         })}
       </div>
 
-      {/* Lightbox Modal */}
       {modalVideo && (
         <div className="lightbox" onClick={() => setModalVideo(null)}>
           <div className="lightbox-content" onClick={e => e.stopPropagation()}>
@@ -89,23 +90,6 @@ export default function MasonryGrid() {
 
 function Thumbnail({ src, alt, onClick }) {
   const [loaded, setLoaded] = useState(false);
-  const img = (
-    <img
-      src={src}
-      alt={alt}
-      onLoad={() => {
-        setLoaded(true);
-        imagesLoaded(document.querySelector('.grid'), () => {
-          new Masonry(document.querySelector('.grid'), {
-            itemSelector: '.card',
-            columnWidth: '.grid-sizer',
-            gutter: 20,
-            percentPosition: true
-          }).layout();
-        });
-      }}
-    />
-  );
 
   return (
     <div
@@ -114,7 +98,23 @@ function Thumbnail({ src, alt, onClick }) {
       style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
       {!loaded && <div className="skeleton" />}
-      {img}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => {
+          setLoaded(true);
+          imagesLoaded(document.querySelector('.grid'), () => {
+            // re-layout after each image loads
+            new Masonry(document.querySelector('.grid'), {
+              itemSelector: '.card',
+              columnWidth: '.grid-sizer',
+              gutter: 20,
+              percentPosition: true,
+              fitWidth: true
+            }).layout();
+          });
+        }}
+      />
       {onClick && <div className="play-icon" />}
     </div>
   );
