@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import './MasonryGrid.css';
+import './Header.css';
 
 export default function Header({ menuOpen, setMenuOpen }) {
   // whenever menuOpen changes, toggle a class on <body>

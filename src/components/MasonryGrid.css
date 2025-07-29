@@ -7,183 +7,10 @@ body {
   padding: 0;
 }
 
-/* draw a semi-transparent fullscreen layer behind the menu when open */
-body.menu-open::before {
-  content: '';
-  position: fixed;
-  inset: 0;                       /* top/right/bottom/left: 0 */
-  background: rgba(0, 0, 0, 0.3); /* adjust alpha to taste */
-  z-index: 1100;                  /* just under your .site-menu (which is 1150+) */
-  pointer-events: none;           /* clicks pass through if you want them to */
-}
-
-/* keep page from scrolling when the menu is open */
-body.menu-open {
-  overflow: hidden;
-}
-
-/* DRAWER BACKDROP via body pseudo-element */
-body.menu-open {
-  overflow: hidden; /* prevent page scroll when menu is open */
-}
-body.menu-open::before {
-  content: '';
-  position: fixed;
-  inset: 0;                        /* covers full viewport */
-  background: rgba(0, 0, 0, 0.3);  /* adjust opacity if it’s too dark */
-  z-index: 1000;                   /* behind the menu panel */
-  pointer-events: auto;            /* allow clicks (e.g. to close if you add a handler) */
-}
-
-/* SIDE-DRAWER PANEL */
-.site-menu {
-  position: fixed;
-  top: 0;
-  right: 0;
-
-  /* FIXED WIDTH: only covers 300px (or tweak as you like) */
-  width: 300px;
-  height: 100vh;
-
-  padding-top: 60px;        /* push content under your header */
-  background: #fff;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-
-  /* start hidden off-screen */
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  z-index: 1100;            /* above the backdrop (1000) */
-}
-
-/* when open, slide it left into view */
-.site-menu.open {
-  transform: translateX(0);
-}
-
-/* stack links vertically */
-.site-menu a {
-  display: block;
-  padding: 1rem 20px;
-  color: #333;
-  text-decoration: none;
-}
-
-
-/* Header and Navigation */
-.site-header {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1200px;
-  height: 60px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  z-index: 1100;
-}
-
-.logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.25rem;
-  font-weight: bold;
-  z-index: 1101;
-}
-
-/* ============================= */
-/* Hamburger / Toggle Button CSS */
-/* ============================= */
-
-.hamburger {
-  position: absolute;
-  top: 50%;
-  right: 20px;                   /* hug the right edge */
-  transform: translateY(-50%);
-  
-  background: rgba(255, 255, 255, 0.85);
-  border: none;
-  padding: 8px;
-  border-radius: 9999px;         /* pill / circle shape */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.hamburger:hover {
-  background: rgba(255, 255, 255, 1);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.hamburger:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
-}
-
-/* Icon sizing & stroke */
-.hamburger svg {
-  width: 28px;
-  height: 28px;
-  stroke: #333;                  /* default dark gray bars */
-  transition: stroke 0.3s ease, transform 0.3s ease;
-}
-
-/* Open state: make the X black, optionally spin */
-.hamburger.open svg {
-  stroke: #000;                  /* pure black X */
-  transform: rotate(90deg);
-}
-
-
-
-/* Make all elements use border-box so widths include padding */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-/* Drop any old display:none on .site-menu */
-.site-menu {
-  display: flex;                 /* ensure it’s renderable */
-  flex-direction: column;        /* stack your links vertically */
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100vw;
-  height: 100vh;
-  padding-top: 60px;             /* push below your header */
-  background: #fff;
-  overflow-y: auto;
-  
-  /* start fully off-screen + invisible */
-  transform: translateX(100%);
-  opacity: 0;
-  pointer-events: none;          /* can’t click it when hidden */
-  
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  z-index: 1200;
-}
-
-/* When “open” is toggled, slide it in and make it interactive */
-.site-menu.open {
-  transform: translateX(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-
 /* Masonry Grid Container */
 .grid {
-  position: relative;      /* for Masonry absolute items */
-  margin: 0 auto 20px;     /* auto-center once Masonry sets width */
+  position: relative;
+  margin: 0 auto 20px;
   padding: 0 10px;
 }
 
@@ -204,7 +31,7 @@ body.menu-open::before {
   opacity: 0;
   animation: fadeInUp 0.5s ease forwards;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: absolute;      /* Masonry will position each card */
+  position: absolute;
 }
 
 .card:hover {
@@ -272,7 +99,7 @@ body.menu-open::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -338,13 +165,6 @@ body.menu-open::before {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .site-menu {
-    right: -220px;   /* same off-screen hide */
-  }
-  .hamburger {
-    width: 28px;
-    height: 20px;
-  }
   .grid {
     margin-top: 80px;
   }
@@ -354,13 +174,6 @@ body.menu-open::before {
 }
 
 @media (max-width: 480px) {
-  .site-menu {
-    right: -100%;    /* off-screen full-width */
-    width: 100%;
-  }
-  .site-menu.open {
-    right: 0;
-  }
   .lightbox-content {
     max-width: 95vw;
     max-height: 55vh;
