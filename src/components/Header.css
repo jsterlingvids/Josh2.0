@@ -1,115 +1,69 @@
 /* src/components/Header.css */
 
-/* ————————————————————
-   BODY STATE (backdrop + no scroll)
-   ———————————————————— */
-body.menu-open {
-  overflow: hidden;
-}
-body.menu-open::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1000;        /* behind the panel */
-  pointer-events: auto; /* for clicks if you wire up a close-on-click */
-}
-
-/* ————————————————————
-   HEADER BAR
-   ———————————————————— */
 .site-header {
   position: fixed;
-  top: 0; left: 50%;
+  top: 0;
+  left: 50%;
   transform: translateX(-50%);
-  width: 100%; max-width: 1200px;
+  width: 100%;
+  max-width: 1200px;
   height: 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  z-index: 1100;
-  background: transparent;
+  justify-content: center;       /* centers logo by default */
+  padding: 0 40px;                /* desktop side padding */
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
 }
+
 .logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   font-size: 1.25rem;
   font-weight: bold;
-  z-index: 1101;
+  text-align: center;
 }
 
-/* ————————————————————
-   MENU BUTTON
-   ———————————————————— */
-.hamburger {
+.social-icons {
   position: absolute;
-  top: 50%; right: 20px;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.85);
-  border: none;
-  padding: 8px;
-  border-radius: 9999px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-  z-index: 1102;
-}
-.hamburger:hover {
-  background: rgba(255,255,255,1);
-  transform: translateY(-50%) scale(1.1);
-}
-.hamburger:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.5);
-}
-.hamburger svg {
-  width: 28px; height: 28px;
-  stroke: #333;
-  transition: stroke 0.3s ease, transform 0.3s ease;
-}
-.hamburger.open svg {
-  stroke: #000;
-  transform: rotate(90deg);
+  right: 40px;                    /* match desktop padding */
+  display: flex;
+  align-items: center;
 }
 
-/* ————————————————————
-   SLIDING PANEL
-   ———————————————————— */
-.site-menu {
-  position: fixed;
-  top: 0; right: 0;
-  width: 300px;
-  height: 100vh;
-  padding-top: 60px;
-  background: #fff;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  z-index: 1103;
-  display: flex;            /* ensure it’s renderable */
-  flex-direction: column;
-  pointer-events: none;     /* disable clicks when closed */
-}
-.site-menu.open {
-  transform: translateX(0);
-  pointer-events: auto;
-}
-.site-menu a {
-  display: block;
-  padding: 1rem 20px;
+.social-icons a {
+  margin-left: 16px;
   color: #333;
-  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-/* ————————————————————
-   RESPONSIVE
-   ———————————————————— */
-@media (max-width: 768px) {
-  .site-menu { width: 80vw; }
+.social-icons a:hover {
+  color: #000;
 }
+
+/* Tablet breakpoint */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 0 24px;
+  }
+  .social-icons {
+    right: 24px;
+  }
+}
+
+/* Mobile: logo left, icons right with extra breathing room */
 @media (max-width: 480px) {
-  .site-menu { width: 100vw; }
+  .site-header {
+    justify-content: space-between;
+    padding: 0 24px;             /* increased from 16px for padding */
+  }
+
+  .logo {
+    text-align: left;
+    padding-left: 15px;
+  }
+
+  .social-icons {
+    position: static;             /* flow in document for flexbox */
+    padding-right: 15px;
+  }
 }

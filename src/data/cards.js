@@ -5,11 +5,11 @@ export default [
     vimeoId: "921691088"
   },
   {
-    title: "Tall Card",
-    description: "This one’s taller for the masonry vibe.",
-    image: "https://source.unsplash.com/random/300x400?sig=2",
-    tall: true,
-  },
+    title: "Empower",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "896332356"
+    },
   {
     title: "Another Card",
     description: "Standard card layout.",

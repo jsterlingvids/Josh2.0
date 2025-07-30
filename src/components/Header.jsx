@@ -1,31 +1,32 @@
-import React, { useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import React from 'react';
 import './Header.css';
+import { Instagram, Youtube, Mail } from 'lucide-react';
 
-export default function Header({ menuOpen, setMenuOpen }) {
-  // whenever menuOpen changes, toggle a class on <body>
-  useEffect(() => {
-    document.body.classList.toggle('menu-open', menuOpen);
-  }, [menuOpen]);
-
+export default function Header() {
   return (
     <header className="site-header">
-      {/* your logo completely unchanged */}
       <div className="logo">My Portfolio</div>
-
-      <button
-        className={`hamburger ${menuOpen ? 'open' : ''}`}
-        onClick={() => setMenuOpen(o => !o)}
-        aria-label="Toggle menu"
-      >
-        {menuOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
-
-      <nav className={`site-menu ${menuOpen ? 'open' : ''}`}>
-        <a href="#home"   onClick={() => setMenuOpen(false)}>Home</a>
-        <a href="#about"  onClick={() => setMenuOpen(false)}>About</a>
-        <a href="#contact"onClick={() => setMenuOpen(false)}>Contact</a>
-      </nav>
+      <div className="social-icons">
+        <a
+          href="https://instagram.com/yourhandle"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+        >
+          <Instagram size={24} />
+        </a>
+        <a
+          href="https://youtube.com/yourchannel"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube"
+        >
+          <Youtube size={24} />
+        </a>
+        <a href="mailto:you@example.com" aria-label="Email">
+          <Mail size={24} />
+        </a>
+      </div>
     </header>
   );
 }

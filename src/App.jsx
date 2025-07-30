@@ -1,29 +1,17 @@
-// src/App.jsx
-import React, { useState, useEffect } from 'react';
-import Header from './components/Header.jsx';
-import MasonryGrid from './components/MasonryGrid.jsx';
+import React, { useState } from 'react';
+import Header from './components/Header';
+import MasonryGrid from './components/MasonryGrid';
+import './index.css'; // loads the reset + push styles
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Close menu on Escape
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, []);
-
   return (
-    <>
+    <div className="app-container">
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-      <main style={{ paddingTop: '60px' }}>
-        {/* pushes the grid below the 60px-tall header */}
+      <main style={{ flex: 1, paddingTop: '60px' }}>
         <MasonryGrid />
       </main>
-    </>
+    </div>
   );
 }

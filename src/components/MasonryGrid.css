@@ -1,39 +1,47 @@
 /* src/components/MasonryGrid.css */
 
-/* Prevent horizontal scroll */
+/*——————————————————————————————————————————————
+  Prevent horizontal scroll
+——————————————————————————————————————————————*/
 body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
 }
 
-/* Masonry Grid Container */
+/*——————————————————————————————————————————————
+  Masonry Grid Container
+——————————————————————————————————————————————*/
 .grid {
   position: relative;
-  margin: 0 auto 20px;
-  padding: 0 10px;
+  margin: 40px auto 30px;    /* extra space above and below */
+  padding: 0 20px;           /* breathing room at edges */
+  max-width: 800px;          /* cap width */
 }
 
-/* Grid sizer sets your column width */
-.grid-sizer {
-  width: 300px;
-}
-
-/* Card styles */
+/*——————————————————————————————————————————————
+  Column & Card Width (3 columns + two 30px gutters)
+——————————————————————————————————————————————*/
+.grid-sizer,
 .card {
-  width: 300px;
-  margin-bottom: 20px;
+  width: calc((100% - 60px) / 3);  /* (container − 2×30px gutter) ÷ 3 */
+}
+
+/*——————————————————————————————————————————————
+  Card styles
+——————————————————————————————————————————————*/
+.card {
+  margin-bottom: 30px;       /* vertical gutter */
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  position: absolute;
   transform: translateY(20px);
   opacity: 0;
   animation: fadeInUp 0.5s ease forwards;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: absolute;
 }
-
 .card:hover {
   transform: translateY(0) scale(1.03);
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
@@ -47,149 +55,149 @@ body {
   }
 }
 
-/* Thumbnail container and image */
+/*——————————————————————————————————————————————
+  Thumbnail container: defines the 16:9 clipping box
+——————————————————————————————————————————————*/
 .thumb-container {
-  position: relative;
+  position: relative;       /* anchor children absolutely */
   width: 100%;
-  padding-top: 56.25%;
-  overflow: hidden;
+  padding-top: 56.25%;      /* 16:9 aspect ratio */
   background: #eee;
+  overflow: hidden;         /* clip overflow */
 }
 
-.thumb-container img {
+/* Make both images and iframes fill that box */
+.thumb-container img,
+.thumb-container iframe {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;     /* allow clicks to bubble up */
 }
 
+/*——————————————————————————————————————————————
+  Skeleton loader
+——————————————————————————————————————————————*/
 .skeleton {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(-90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(-90deg,
+    #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
 }
-
 @keyframes skeleton-loading {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 
+/*——————————————————————————————————————————————
+  Play‐icon overlay
+——————————————————————————————————————————————*/
 .play-icon {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   font-size: 2rem;
-  color: white;
+  color: #fff;
   pointer-events: none;
   z-index: 1;
 }
 
-/* Lightbox overlay and content */
+/*——————————————————————————————————————————————
+  Lightbox overlay & content
+——————————————————————————————————————————————*/
 .lightbox {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex; align-items: center; justify-content: center;
   z-index: 1000;
   opacity: 0;
   animation: fadeIn 0.3s ease forwards;
 }
-
 @keyframes fadeIn {
   to { opacity: 1; }
 }
 
 .lightbox-content {
   position: relative;
-  width: 100%;
-  max-width: 800px;
-  max-height: 70vh;
-  aspect-ratio: 16 / 9;
+  width: 100%; max-width: 800px; max-height: 70vh;
+  aspect-ratio: 16/9;
   background: #000;
-  animation: fadeInUp 0.3s ease forwards;
   border-radius: 10px;
   overflow: hidden;
+  animation: fadeInUp 0.3s ease forwards;
 }
 
 .video-wrapper {
   position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  width: 100%; height: 100%;
 }
-
 .video-wrapper iframe {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   border: none;
 }
 
+/* Close button */
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.25rem;
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.9);
+  top: 10px; right: 10px;
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.9);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   transition: transform 0.3s ease, background 0.3s ease;
 }
-
 .close-button:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255,255,255,1);
   transform: scale(1.1);
 }
 
-/* Responsive adjustments */
+/*——————————————————————————————————————————————
+  Responsive – Tablet (2 columns)
+——————————————————————————————————————————————*/
 @media (max-width: 768px) {
   .grid {
-    margin-top: 80px;
+    padding: 0 16px;
   }
-  .card, .grid-sizer {
-    width: calc(50% - 10px);
+  .grid-sizer,
+  .card {
+    width: calc((100% - 30px) / 2);  /* (container − 1×30px gutter) ÷ 2 */
   }
 }
 
+/*——————————————————————————————————————————————
+  Responsive – Mobile (1 column, narrower & less top margin)
+——————————————————————————————————————————————*/
 @media (max-width: 480px) {
+  .grid {
+    margin: 20px auto 20px;
+    max-width: calc(100vw - 40px);
+    padding: 0;
+  }
+  .grid-sizer,
+  .card {
+    width: 100%;
+  }
   .lightbox-content {
     max-width: 95vw;
     max-height: 55vh;
     border-radius: 6px;
   }
-  .grid {
-    margin-top: 70px;
-  }
-  .card, .grid-sizer {
-    width: calc(100% - 20px);
-  }
   .close-button {
-    top: 6px;
-    right: 6px;
-    width: 24px;
-    height: 24px;
+    top: 6px; right: 6px;
+    width: 24px; height: 24px;
     font-size: 1rem;
   }
   .play-icon {
