@@ -55,6 +55,15 @@ body {
   }
 }
 
+.instagram-card {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+}
+
+
+
+
 /*——————————————————————————————————————————————
   Thumbnail container: defines the 16:9 clipping box
 ——————————————————————————————————————————————*/

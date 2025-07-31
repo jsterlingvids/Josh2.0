@@ -1,5 +1,6 @@
 /* src/components/Header.css */
 
+/* Base header styling */
 .site-header {
   position: fixed;
   top: 0;
@@ -10,19 +11,36 @@
   height: 60px;
   display: flex;
   align-items: center;
-  justify-content: center;       /* centers logo by default */
-  padding: 0 40px;                /* desktop side padding */
+  justify-content: center;
+  padding: 0 40px;
   background: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  /* REMOVE the drop shadow */
+  box-shadow: none;
+
+  /* ADD a thick bottom stroke */
+
+
   z-index: 100;
 }
 
+/* Logo container */
 .logo {
-  font-size: 1.25rem;
-  font-weight: bold;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
+/* Constrain the logo image to fit inside the header */
+.logo img {
+  max-height: 30px;  /* caps at the header height (60px) */
+  width: auto;       /* preserves aspect ratio */
+  display: block;
+}
+
+/* Social icons container */
 .social-icons {
   position: absolute;
   right: 40px;                    /* match desktop padding */
@@ -32,12 +50,16 @@
 
 .social-icons a {
   margin-left: 16px;
-  color: #333;
+  color: #000;
   transition: color 0.2s ease;
 }
 
 .social-icons a:hover {
   color: #000;
+}
+
+.social-icons svg {
+  stroke-width: 1.75px;      /* default is ~2, so 2.5 gives a bit more weight */
 }
 
 /* Tablet breakpoint */
@@ -54,12 +76,16 @@
 @media (max-width: 480px) {
   .site-header {
     justify-content: space-between;
-    padding: 0 24px;             /* increased from 16px for padding */
+    padding: 0 24px;
   }
 
   .logo {
-    text-align: left;
+    justify-content: flex-start;
     padding-left: 15px;
+  }
+
+  .logo img {
+    max-height: 20px;  /* slightly smaller on phones */
   }
 
   .social-icons {
