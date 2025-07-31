@@ -5,7 +5,7 @@ import { Instagram, Youtube, Mail } from 'lucide-react';
 export default function Header() {
   return (
     <header className="site-header">
-      <div className="logo">My Portfolio</div>
+      <div className="logo"><img src="images\josh_logo.png" alt="" /></div>
       <div className="social-icons">
         <a
           href="https://instagram.com/yourhandle"

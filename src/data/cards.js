@@ -10,22 +10,50 @@ export default [
     // Switched to your Vimeo link:
     vimeoId: "896332356"
     },
-  {
-    title: "Another Card",
-    description: "Standard card layout.",
-    image: "https://source.unsplash.com/random/300x200?sig=3",
-    tall: false,
-  },
-  {
-    title: "Even Taller",
-    description: "Stretch that layout!",
-    image: "https://source.unsplash.com/random/300x500?sig=4",
-    tall: true,
-  },
-  {
-    title: "Short & Sweet",
-    description: "A compact card with a small image.",
-    image: "https://source.unsplash.com/random/300x180?sig=5",
-    tall: false,
-  }
+   {
+    title: "BQX",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "239344595"
+    },
+   {
+    title: "Bullhorn",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "897541093"
+    },
+   {
+    title: "Made in NY",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "239344919"
+    },
+       {
+    title: "Business Phone",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "896334040"
+    },
+      {
+    title: "NYCxDesign",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "310287479"
+    },
+      {
+    title: "Lettuce",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "1106204193"
+    },
+       {
+    title: "Fish Can Fly",
+    description: "Empower Launch Video.",
+    // Switched to your Vimeo link:
+    vimeoId: "1106204167"
+    }
+
+    
+
+
 ];
