@@ -17,7 +17,7 @@ export default function MasonryGrid() {
     []
   );
 
-  // 1) Masonry + ImagesLoaded as before
+  // 1) Masonry + ImagesLoaded
   useEffect(() => {
     const grid = gridRef.current;
     const msnry = new Masonry(grid, {
@@ -35,14 +35,14 @@ export default function MasonryGrid() {
     };
   }, []);
 
-  // 2) Process Instagram embeds after render
+  // 2) Process Instagram embeds
   useEffect(() => {
     if (window.instgrm?.Embeds) {
       window.instgrm.Embeds.process();
     }
   });
 
-  // 3) Pause/resume Vimeo previews around lightbox
+  // 3) Pause/resume Vimeo previews when lightbox toggles
   const prevModal = useRef(modalVideo);
   useEffect(() => {
     if (!gridRef.current) return;
@@ -149,6 +149,7 @@ export default function MasonryGrid() {
                 allow="autoplay; fullscreen"
                 allowFullScreen
                 title="Vimeo video"
+                style={{ width: '100%', height: '100%' }}
               />
             </div>
           </div>
@@ -158,14 +159,38 @@ export default function MasonryGrid() {
   );
 }
 
+// Lazy-loading Thumbnail component
 function Thumbnail({ vimeoId, src, alt, onClick }) {
   const containerRef = useRef(null);
+  const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
+  // 1) Observe when the card enters viewport
   useEffect(() => {
-    if (!vimeoId) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // 2) Inject the Vimeo iframe only when in view
+  useEffect(() => {
+    if (!vimeoId || !inView) return;
+
     const iframe = document.createElement('iframe');
-    iframe.src = `https://player.vimeo.com/video/${vimeoId}?background=1&muted=1&quality=240p`;
+    iframe.loading = 'lazy';
+    iframe.src = `https://player.vimeo.com/video/${vimeoId}?background=1&muted=1&quality=144p`;
     iframe.frameBorder = '0';
     iframe.allow = 'autoplay; fullscreen';
     iframe.style.pointerEvents = 'none';
@@ -183,7 +208,7 @@ function Thumbnail({ vimeoId, src, alt, onClick }) {
       player.unload().catch(() => {});
       containerRef.current.removeChild(iframe);
     };
-  }, [vimeoId]);
+  }, [inView, vimeoId]);
 
   return (
     <div
