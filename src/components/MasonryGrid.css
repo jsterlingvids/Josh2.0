@@ -1,37 +1,29 @@
 /* src/components/MasonryGrid.css */
 
-/*——————————————————————————————————————————————
-  Prevent horizontal scroll
-——————————————————————————————————————————————*/
+/* Prevent horizontal scroll */
 body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
 }
 
-/*——————————————————————————————————————————————
-  Masonry Grid Container
-——————————————————————————————————————————————*/
+/* Masonry Grid Container */
 .grid {
   position: relative;
-  margin: 40px auto 30px;    /* extra space above and below */
-  padding: 0 20px;           /* breathing room at edges */
-  max-width: 800px;          /* cap width */
+  margin: 40px auto 30px;
+  padding: 0 20px;
+  max-width: 800px;
 }
 
-/*——————————————————————————————————————————————
-  Column & Card Width (3 columns + two 30px gutters)
-——————————————————————————————————————————————*/
+/* Column & Card Width (3 columns + two 30px gutters) */
 .grid-sizer,
 .card {
-  width: calc((100% - 60px) / 3);  /* (container − 2×30px gutter) ÷ 3 */
+  width: calc((100% - 60px) / 3);
 }
 
-/*——————————————————————————————————————————————
-  Card styles
-——————————————————————————————————————————————*/
+/* Card styles */
 .card {
-  margin-bottom: 30px;       /* vertical gutter */
+  margin-bottom: 30px;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -47,55 +39,41 @@ body {
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
   z-index: 2;
 }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Instagram cards should be tall (Reels) */
 .instagram-card {
   position: relative;
   aspect-ratio: 9 / 16;
   overflow: hidden;
 }
 
-
-
-
-/*——————————————————————————————————————————————
-  Thumbnail container: defines the 16:9 clipping box
-——————————————————————————————————————————————*/
+/* Thumbnail container: default 16:9 (Vimeo).
+   For IG we override via inline style to 9/16. */
 .thumb-container {
-  position: relative;       /* anchor children absolutely */
+  position: relative;
   width: 100%;
-  padding-top: 56.25%;      /* 16:9 aspect ratio */
+  padding-top: 56.25%;
   background: #eee;
-  overflow: hidden;         /* clip overflow */
+  overflow: hidden;
 }
 
-/* Make both images and iframes fill that box */
+/* Fill container */
 .thumb-container img,
 .thumb-container iframe {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: none;     /* allow clicks to bubble up */
+  pointer-events: none;
 }
 
-/*——————————————————————————————————————————————
-  Skeleton loader
-——————————————————————————————————————————————*/
+/* Skeleton loader */
 .skeleton {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(-90deg,
-    #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+  inset: 0;
+  background: linear-gradient(-90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
 }
@@ -104,9 +82,7 @@ body {
   100% { background-position: -200% 0; }
 }
 
-/*——————————————————————————————————————————————
-  Play‐icon overlay
-——————————————————————————————————————————————*/
+/* Play icon overlay */
 .play-icon {
   position: absolute;
   top: 50%; left: 50%;
@@ -117,22 +93,17 @@ body {
   z-index: 1;
 }
 
-/*——————————————————————————————————————————————
-  Lightbox overlay & content
-——————————————————————————————————————————————*/
+/* Lightbox overlay & content */
 .lightbox {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  inset: 0;
+  background: rgba(0,0,0,0.85);
   display: flex; align-items: center; justify-content: center;
   z-index: 1000;
   opacity: 0;
   animation: fadeIn 0.3s ease forwards;
 }
-@keyframes fadeIn {
-  to { opacity: 1; }
-}
+@keyframes fadeIn { to { opacity: 1; } }
 
 .lightbox-content {
   position: relative;
@@ -144,24 +115,19 @@ body {
   animation: fadeInUp 0.3s ease forwards;
 }
 
-.video-wrapper {
-  position: relative;
-  width: 100%; height: 100%;
-}
+.video-wrapper { position: relative; width: 100%; height: 100%; }
 .video-wrapper iframe {
-  position: absolute;
-  top: 0; left: 0;
+  position: absolute; inset: 0;
   width: 100%; height: 100%;
-  border: none;
+  border: 0;
 }
 
 /* Close button */
 .close-button {
-  position: absolute;
-  top: 10px; right: 10px;
+  position: absolute; top: 10px; right: 10px;
   width: 32px; height: 32px;
   background: rgba(255,255,255,0.9);
-  border: none;
+  border: 0;
   border-radius: 50%;
   cursor: pointer;
   z-index: 1001;
@@ -173,32 +139,20 @@ body {
   transform: scale(1.1);
 }
 
-/*——————————————————————————————————————————————
-  Responsive – Tablet (2 columns)
-——————————————————————————————————————————————*/
+/* Tablet (2 columns) */
 @media (max-width: 768px) {
-  .grid {
-    padding: 0 16px;
-  }
-  .grid-sizer,
-  .card {
-    width: calc((100% - 30px) / 2);  /* (container − 1×30px gutter) ÷ 2 */
-  }
+  .grid { padding: 0 16px; }
+  .grid-sizer, .card { width: calc((100% - 30px) / 2); }
 }
 
-/*——————————————————————————————————————————————
-  Responsive – Mobile (1 column, narrower & less top margin)
-——————————————————————————————————————————————*/
+/* Mobile (1 column) */
 @media (max-width: 480px) {
   .grid {
     margin: 20px auto 20px;
     max-width: calc(100vw - 40px);
     padding: 0;
   }
-  .grid-sizer,
-  .card {
-    width: 100%;
-  }
+  .grid-sizer, .card { width: 100%; }
   .lightbox-content {
     max-width: 95vw;
     max-height: 55vh;
@@ -209,7 +163,49 @@ body {
     width: 24px; height: 24px;
     font-size: 1rem;
   }
-  .play-icon {
-    font-size: 1.2rem;
-  }
+  .play-icon { font-size: 1.2rem; }
+}
+
+/* Force IG thumbs to use aspect-ratio and ignore 16:9 padding */
+.thumb-container.ig {
+  padding-top: 0 !important;
+  aspect-ratio: 9 / 16;
+}
+
+/* Make IG tiles tall in the grid */
+.thumb-container.ig {
+  padding-top: 0 !important;
+  aspect-ratio: 9 / 16;
+}
+
+/* Default (Vimeo) lightbox is 16:9 — you already have this on .lightbox-content */
+.lightbox-content.landscape {
+  aspect-ratio: 16 / 9;
+  width: min(90vw, 800px);
+  max-height: 80vh;
+}
+
+/* Instagram lightbox: portrait 9:16 */
+.lightbox-content.ig {
+  aspect-ratio: 9 / 16;
+  height: min(80vh, 90vh);
+  max-height: 90vh;
+  width: auto;           /* let height drive width */
+  max-width: 95vw;       /* but don't overflow sideways on small screens */
+}
+
+.ig-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instagram-card .thumb-container {
+  position: relative;
 }

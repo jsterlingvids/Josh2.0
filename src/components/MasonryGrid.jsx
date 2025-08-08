@@ -9,104 +9,124 @@ import { motion } from 'framer-motion';
 
 export default function MasonryGrid() {
   const gridRef = useRef(null);
-  const [modalVideo, setModalVideo] = useState(null);
 
-  // sort cards by `order` field
-  const sortedCards = useMemo(
-    () => [...cardData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
-    []
-  );
+  // Track both the src and whether it's IG (portrait) or not
+  const [modal, setModal] = useState({ src: null, isIG: false });
 
-  // 1) Masonry + ImagesLoaded
+  // Sort cards by order
+  const sortedCards = useMemo(() => {
+    const arr = [...cardData].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    return arr;
+  }, []);
+
+  // Masonry + ImagesLoaded
   useEffect(() => {
-    const grid = gridRef.current;
-    const msnry = new Masonry(grid, {
-      itemSelector: '.card',
-      columnWidth: '.grid-sizer',
-      gutter: 30,
-      percentPosition: true,
-      fitWidth: false,
-    });
-    const imgLoad = imagesLoaded(grid);
-    imgLoad.on('progress', () => msnry.layout());
+    if (!gridRef.current) return;
+    let msnry;
+    try {
+      msnry = new Masonry(gridRef.current, {
+        itemSelector: '.card',
+        columnWidth: '.grid-sizer',
+        gutter: 30,
+        percentPosition: true,
+        fitWidth: false,
+      });
+    } catch {
+      return;
+    }
+
+    const imgLoad = imagesLoaded(gridRef.current);
+    const layout = () => msnry.layout();
+    imgLoad.on('progress', layout);
+    imgLoad.on('done', layout);
+
+    const onResize = debounce(layout, 120);
+    window.addEventListener('resize', onResize);
+
     return () => {
-      imgLoad.off('progress');
-      msnry.destroy();
+      window.removeEventListener('resize', onResize);
+      try { msnry.destroy(); } catch {}
     };
   }, []);
 
-  // 2) Process Instagram embeds
-  useEffect(() => {
-    if (window.instgrm?.Embeds) {
-      window.instgrm.Embeds.process();
-    }
-  });
-
-  // 3) Pause/resume Vimeo previews when lightbox toggles
-  const prevModal = useRef(modalVideo);
+  // Pause/resume Vimeo previews when modal opens/closes
+  const prevModal = useRef(modal.src);
   useEffect(() => {
     if (!gridRef.current) return;
     gridRef.current
       .querySelectorAll('.thumb-container iframe')
       .forEach((iframe) => {
         const player = new Player(iframe);
-        if (modalVideo) {
+        if (modal.src) {
           player.pause().catch(() => {});
-        } else if (prevModal.current && !modalVideo) {
-          player
-            .setCurrentTime(0)
-            .then(() => player.play().catch(() => {}))
-            .catch(() => {});
+        } else if (prevModal.current && !modal.src) {
+          player.setCurrentTime(0).then(() => player.play()).catch(() => {});
         }
       });
-    prevModal.current = modalVideo;
-  }, [modalVideo]);
+    prevModal.current = modal.src;
+  }, [modal.src]);
+
+  // Lazy-load Instagram embed script ONLY when opening an IG modal
+  useEffect(() => {
+    if (!modal.src || !modal.isIG) return;
+    if (!window.instgrm) {
+      const s = document.createElement('script');
+      s.src = 'https://www.instagram.com/embed.js';
+      s.async = true;
+      document.body.appendChild(s);
+    }
+  }, [modal.src, modal.isIG]);
 
   return (
     <>
       <div className="grid" ref={gridRef}>
         <div className="grid-sizer" />
 
-        {sortedCards.map((card) => {
-          const { vimeoId, instagramShortcode, title } = card;
+        {sortedCards.map((card, idx) => {
+          const { vimeoId, title, instagramShortcode } = card;
 
-          // INSTAGRAM EMBED
+          // Instagram card: use manual local image /images/{Title_With_Underscores}.jpg
           if (instagramShortcode && !vimeoId) {
+            const imgName = title.replace(/\s+/g, '_') + '.jpg';
+            const localPath = `/images/${imgName}`;
             return (
               <motion.div
-                key={`ig-${instagramShortcode}`}
+                key={`ig-${idx}`}
                 className="card instagram-card"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                onClick={() =>
-                  setModalVideo(
-                    `https://www.instagram.com/reel/${instagramShortcode}/embed`
-                  )
-                }
-                style={{ cursor: 'pointer' }}
               >
-                <iframe
-                  src={`https://www.instagram.com/reel/${instagramShortcode}/embed`}
-                  frameBorder="0"
-                  scrolling="no"
-                  allow="clipboard-write; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                  title={title}
-                  style={{ width: '100%', height: '100%' }}
-                />
+                <div
+                  className="thumb-container ig"
+                  onClick={() =>
+                    setModal({
+                      src: `https://www.instagram.com/reel/${instagramShortcode}/embed`,
+                      isIG: true,
+                    })
+                  }
+                  style={{ cursor: 'pointer' }}
+                >
+                  <img
+                    src={localPath}
+                    alt={title || 'Instagram Reel'}
+                    loading="lazy"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                  <div className="play-icon">▶</div>
+                </div>
               </motion.div>
             );
           }
 
-          // VIMEO PREVIEW CARD
+          // Vimeo / static image
           const imageUrl = vimeoId
             ? `https://vumbnail.com/${vimeoId}.jpg`
             : card.image;
 
           return (
             <motion.div
-              key={vimeoId}
+              key={vimeoId || `img-${idx}`}
               className={`card ${vimeoId ? 'video' : ''}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -119,9 +139,10 @@ export default function MasonryGrid() {
                 onClick={
                   vimeoId
                     ? () =>
-                        setModalVideo(
-                          `https://player.vimeo.com/video/${vimeoId}?autoplay=1`
-                        )
+                        setModal({
+                          src: `https://player.vimeo.com/video/${vimeoId}?autoplay=1`,
+                          isIG: false,
+                        })
                     : null
                 }
               />
@@ -130,26 +151,27 @@ export default function MasonryGrid() {
         })}
       </div>
 
-      {modalVideo && (
-        <div className="lightbox" onClick={() => setModalVideo(null)}>
+      {modal.src && (
+        <div className="lightbox" onClick={() => setModal({ src: null, isIG: false })}>
           <div
-            className="lightbox-content"
+            className={`lightbox-content ${modal.isIG ? 'ig' : 'landscape'}`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               className="close-button"
-              onClick={() => setModalVideo(null)}
+              aria-label="Close video"
+              type="button"
+              onClick={() => setModal({ src: null, isIG: false })}
             >
               ×
             </button>
             <div className="video-wrapper">
               <iframe
-                src={modalVideo}
+                src={modal.src}
                 frameBorder="0"
-                allow="autoplay; fullscreen"
+                allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture"
                 allowFullScreen
-                title="Vimeo video"
-                style={{ width: '100%', height: '100%' }}
+                title="Embedded video"
               />
             </div>
           </div>
@@ -159,56 +181,35 @@ export default function MasonryGrid() {
   );
 }
 
-// Lazy-loading Thumbnail component
 function Thumbnail({ vimeoId, src, alt, onClick }) {
   const containerRef = useRef(null);
-  const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // 1) Observe when the card enters viewport
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '200px' }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  // 2) Inject the Vimeo iframe only when in view
-  useEffect(() => {
-    if (!vimeoId || !inView) return;
+    if (!vimeoId) return;
 
     const iframe = document.createElement('iframe');
-    iframe.loading = 'lazy';
-    iframe.src = `https://player.vimeo.com/video/${vimeoId}?background=1&muted=1&quality=144p`;
+    iframe.src = `https://player.vimeo.com/video/${vimeoId}?background=1&muted=1&quality=240p`;
     iframe.frameBorder = '0';
     iframe.allow = 'autoplay; fullscreen';
     iframe.style.pointerEvents = 'none';
-    containerRef.current.appendChild(iframe);
+    containerRef.current?.appendChild(iframe);
 
     const player = new Player(iframe, { loop: false, autopause: false });
     player.ready().then(() => {
       setLoaded(true);
       player.on('timeupdate', ({ seconds }) => {
-        if (seconds >= 6) player.setCurrentTime(0);
+        if (seconds >= 6) player.setCurrentTime(0).catch(() => {});
       });
-    });
+    }).catch(() => {});
 
     return () => {
       player.unload().catch(() => {});
-      containerRef.current.removeChild(iframe);
+      if (containerRef.current?.contains(iframe)) {
+        containerRef.current.removeChild(iframe);
+      }
     };
-  }, [inView, vimeoId]);
+  }, [vimeoId]);
 
   return (
     <div
@@ -217,8 +218,23 @@ function Thumbnail({ vimeoId, src, alt, onClick }) {
       onClick={onClick}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
-      {!loaded && <div className="skeleton" />}
+      {!loaded && vimeoId && <div className="skeleton" />}
+      {src && !vimeoId && (
+        <img
+          src={src}
+          alt={alt || 'Video thumbnail'}
+          loading="lazy"
+        />
+      )}
       {onClick && <div className="play-icon" />}
     </div>
   );
+}
+
+function debounce(fn, wait = 100) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), wait);
+  };
 }
