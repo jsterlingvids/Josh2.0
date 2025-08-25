@@ -19,10 +19,13 @@ export default [
     // Switched to your Vimeo link:
     vimeoId: "239344595"
     },
-                 { order: 5,
-      title: "Junk Burger 01",
-       instagramShortcode: "DLXuRIfo-sy" 
-      },
+    {
+  order: 5,
+  title: "Josh AI",                // becomes Josh_AI.jpg
+  instagramShortcode: "DNvVawq1NLU",
+  instagramType: "reel"            // optional, reels are default
+},
+
    {
     order: 4,
     title: "Bullhorn",
@@ -58,6 +61,10 @@ export default [
     // Switched to your Vimeo link:
     vimeoId: "1106204193"
     },
+                   { order: 5,
+      title: "Junk Burger 01",
+       instagramShortcode: "DLXuRIfo-sy" 
+      },
        {
         order: 9,
     title: "Fish Can Fly",

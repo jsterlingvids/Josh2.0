@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 export default function MasonryGrid() {
   const gridRef = useRef(null);
 
-  // Track both the src and whether it's IG (portrait) or not
+  // Modal only used for Vimeo (IG now opens in new tab)
   const [modal, setModal] = useState({ src: null, isIG: false });
 
   // Sort cards by order
@@ -66,17 +66,6 @@ export default function MasonryGrid() {
     prevModal.current = modal.src;
   }, [modal.src]);
 
-  // Lazy-load Instagram embed script ONLY when opening an IG modal
-  useEffect(() => {
-    if (!modal.src || !modal.isIG) return;
-    if (!window.instgrm) {
-      const s = document.createElement('script');
-      s.src = 'https://www.instagram.com/embed.js';
-      s.async = true;
-      document.body.appendChild(s);
-    }
-  }, [modal.src, modal.isIG]);
-
   return (
     <>
       <div className="grid" ref={gridRef}>
@@ -85,7 +74,7 @@ export default function MasonryGrid() {
         {sortedCards.map((card, idx) => {
           const { vimeoId, title, instagramShortcode } = card;
 
-          // Instagram card: use manual local image /images/{Title_With_Underscores}.jpg
+          // Instagram card: open REEL in a new tab
           if (instagramShortcode && !vimeoId) {
             const imgName = title.replace(/\s+/g, '_') + '.jpg';
             const localPath = `/images/${imgName}`;
@@ -97,29 +86,27 @@ export default function MasonryGrid() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div
-                  className="thumb-container ig"
-                  onClick={() =>
-                    setModal({
-                      src: `https://www.instagram.com/reel/${instagramShortcode}/embed`,
-                      isIG: true,
-                    })
-                  }
-                  style={{ cursor: 'pointer' }}
+                <a
+                  href={`https://www.instagram.com/reel/${instagramShortcode}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={title || 'Open Instagram Reel'}
+                  style={{ display: 'block' }}
                 >
-                  <img
-                    src={localPath}
-                    alt={title || 'Instagram Reel'}
-                    loading="lazy"
-                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                  />
-                  <div className="play-icon">
-  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
-    <path d="M8 5v14l11-7z"/>
-  </svg>
-</div>
-
-                </div>
+                  <div className="thumb-container ig" style={{ cursor: 'pointer' }}>
+                    <img
+                      src={localPath}
+                      alt={title || 'Instagram Reel'}
+                      loading="lazy"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                    <div className="play-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </a>
               </motion.div>
             );
           }
